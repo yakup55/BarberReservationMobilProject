@@ -2,7 +2,8 @@ import axios from "axios";
 
 class ImageService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/images`;
+    this.baseUrl = `http://10.12.2.10:8080/images`;
+    //this.baseUrl = `http://10.11.56.20:8080/images`;
   }
   async getImagesList() {
     const url = `${this.baseUrl}`;

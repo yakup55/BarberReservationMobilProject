@@ -2,7 +2,8 @@ import axios from "axios";
 
 class UserService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/users`;
+    this.baseUrl = `http://10.12.2.10:8080/users`;
+    //this.baseUrl = `http://10.11.56.20:8080/users`;
   }
   async getUsersList() {
     const url = `${this.baseUrl}`;

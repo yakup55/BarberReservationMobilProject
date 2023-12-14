@@ -4,7 +4,6 @@ import {
   Button,
   Center,
   FormControl,
-  HStack,
   Heading,
   Input,
   Link,
@@ -12,9 +11,61 @@ import {
   VStack,
 } from "native-base";
 import React from "react";
-
+import { useDispatch } from "react-redux";
+import AuthService from "../../Redux/services/authService";
+import { login, setUser } from "../../Redux/actions/authActions";
+import { useFormik } from "formik";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import validationSchema from "../Register/validations";
 function Login() {
-  const navigation=useNavigation()
+  const dispacth = useDispatch();
+  const service = new AuthService();
+  const navigation = useNavigation();
+  const {
+    handleSubmit,
+    values,
+    handleChange,
+    touched,
+    errors,
+    handleBlur,
+    isSubmitting,
+  } = useFormik({
+    initialValues: {
+      userName: "",
+      password: "",
+    },
+    onSubmit: async (values) => {
+      console.log(values);
+
+      dispacth(login(values));
+      const result = await service.login(values);
+
+      if (result.status === 200) {
+        const resp = result.data;
+        AsyncStorage.setItem("userId", resp.userId);
+        AsyncStorage.setItem("userName", resp.userName);
+        AsyncStorage.setItem("surName", resp.surName);
+        AsyncStorage.setItem("phoneNumber", resp.phoneNumber);
+        AsyncStorage.setItem("message", resp.message);
+        AsyncStorage.setItem("accessToken", resp.accessToken);
+        AsyncStorage.setItem("refreshToken", resp.refreshToken);
+        AsyncStorage.setItem("isLogin", true);
+
+        dispacth(
+          setUser({
+            userId: resp.userId,
+            userName: resp.userName,
+            accessToken: resp.accessToken,
+            isLogin: true,
+          })
+        );
+      }
+
+      if (result.status === 401) {
+      }
+    },
+    validationSchema,
+  });
   return (
     <Center w="100%">
       <Box safeArea p="2" py="8" w="90%" maxW="290">
@@ -39,15 +90,35 @@ function Login() {
         >
           Devam Etmek İçin Lütfen Oturum Açın
         </Heading>
-
         <VStack space={3} mt="5">
           <FormControl>
             <FormControl.Label>Kullanıcı Adınız</FormControl.Label>
-            <Input />
+            <Input
+              id="userName"
+              name="userName"
+              onChangeText={handleChange("userName")}
+              value={values.userName}
+              onBlur={handleBlur("userName")}
+              editable={!isSubmitting}
+            />
+            {errors.userName && touched.userName && (
+              <Text style={{ color: "red" }}>{errors.userName}</Text>
+            )}
           </FormControl>
           <FormControl>
             <FormControl.Label>Kullanıcı Şifreniz</FormControl.Label>
-            <Input type="password" />
+            <Input
+              id="password"
+              name="password"
+              onChangeText={handleChange("password")}
+              value={values.password}
+              onBlur={handleBlur("password")}
+              type="password"
+              editable={!isSubmitting}
+            />
+            {errors.password && touched.password && (
+              <Text style={{ color: "red" }}>{errors.password}</Text>
+            )}
             <Link
               _text={{
                 fontSize: "xs",
@@ -60,10 +131,14 @@ function Login() {
               Şifremi Unuttum
             </Link>
           </FormControl>
-          <Button mt="2" colorScheme="indigo">
+          <Button onPress={handleSubmit} mt="2" colorScheme="indigo">
             Giriş Yap
           </Button>
-          <Button onPress={()=>navigation.navigate("BerberLogin")} mt="2" colorScheme="indigo">
+          <Button
+            onPress={() => navigation.navigate("BerberLogin")}
+            mt="2"
+            colorScheme="indigo"
+          >
             Berber Girişi
           </Button>
         </VStack>

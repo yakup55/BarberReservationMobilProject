@@ -2,7 +2,8 @@ import axios from "axios";
 
 class BarberService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/barbers`;
+    this.baseUrl = `http://10.12.2.10:8080/barbers`;
+   // this.baseUrl = `http://10.11.56.20:8080/barbers`;
   }
 
   async getBarbersList() {

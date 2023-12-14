@@ -2,7 +2,8 @@ import axios from "axios";
 
 class ReservationService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/reservations`;
+    this.baseUrl = `http://10.12.2.10:8080/reservations`;
+    // this.baseUrl = `http://10.11.56.20:8080/reservations`;
   }
   async getReservationsList() {
     const url = `${this.baseUrl}`;
@@ -33,12 +34,14 @@ class ReservationService {
 
   async check(barberId, hourId, date) {
     const url = `${this.baseUrl}/check/${barberId}/${hourId}/${date}`;
-    return await axios.get(url).then((resp) =>{
-      return {status:resp.status,data:resp.data};
-  }) 
-  .catch((err) => {
-      return { status: err.response.status };
-    });
+    return await axios
+      .get(url)
+      .then((resp) => {
+        return { status: resp.status, data: resp.data };
+      })
+      .catch((err) => {
+        return { status: err.response.status };
+      });
   }
 
   async addReservation(reservation) {

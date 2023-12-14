@@ -2,7 +2,8 @@ import axios from "axios";
 
 class QuentionsService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/quentions`;
+    this.baseUrl = `http://10.12.2.10:8080/quentions`;
+    //this.baseUrl = `http://10.11.56.20:8080/quentions`;
   }
   async getQuentionsList() {
     const url = `${this.baseUrl}`;

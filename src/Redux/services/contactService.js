@@ -2,7 +2,8 @@ import axios from "axios";
 
 class ContactsService {
   constructor() {
-    this.baseUrl = `${process.env.REACT_APP_BASEURL}/contacts`;
+    this.baseUrl = `http://10.12.2.10:8080/contacts`;
+    //this.baseUrl = `http://10.11.56.20:8080/contacts`;
   }
   async getContactsList() {
     const url = `${this.baseUrl}`;
