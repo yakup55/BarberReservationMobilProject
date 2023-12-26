@@ -2,6 +2,7 @@ import axios from "axios";
 
 class BarberService {
   constructor() {
+   // this.baseUrl = `http://10.36.117.95:8080/barbers`;
     this.baseUrl = `http://10.12.2.10:8080/barbers`;
    // this.baseUrl = `http://10.11.56.20:8080/barbers`;
   }

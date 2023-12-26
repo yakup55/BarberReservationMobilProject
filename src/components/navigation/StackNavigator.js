@@ -11,6 +11,9 @@ import About from "../About/About";
 import UserHome from "../User/UserHome";
 import UserPasswordUpdate from "../User/UserPasswordUpdate";
 import UserUpdate from "../User/UserUpdate";
+import AdminUpdate from "../../Admin/AdminUpdate";
+import AdminHome from "../../Admin/AdminHome";
+import AdminPasswordUpdate from "../../Admin/AdminPasswordUpdate"
 const HomeStack = createNativeStackNavigator();
 
 function HomeStackScreen() {
@@ -105,7 +108,7 @@ function UserHomeStackScreen() {
   );
 }
 const UserPasswordUpdateStack = createNativeStackNavigator();
-function UserPasswordUpdateScreen() {
+function UserPasswordUpdateStackScreen() {
   return (
     <UserPasswordUpdateStack.Navigator>
       <UserPasswordUpdateStack.Screen
@@ -118,7 +121,7 @@ function UserPasswordUpdateScreen() {
 }
 
 const UserUpdateStack = createNativeStackNavigator();
-function UserUpdateScreen() {
+function UserUpdateStackScreen() {
   return (
     <UserUpdateStack.Navigator>
       <UserUpdateStack.Screen
@@ -129,12 +132,51 @@ function UserUpdateScreen() {
     </UserUpdateStack.Navigator>
   );
 }
+const AdminUpdateStack = createNativeStackNavigator();
+function AdminUpdateStackScreen() {
+  return (
+    <AdminUpdateStack.Navigator>
+      <AdminUpdateStack.Screen
+        name="AdminUpdate"
+        options={{ title: "Profil Güncelle" }}
+        component={AdminUpdate}
+      ></AdminUpdateStack.Screen>
+    </AdminUpdateStack.Navigator>
+  );
+}
+const AdminPasswordUpdateStack = createNativeStackNavigator();
+function AdminPasswordUpdateStackScreen() {
+  return (
+    <AdminPasswordUpdateStack.Navigator>
+      <AdminPasswordUpdateStack.Screen
+        name="AdminPasswordUpdate"
+        options={{ title: "Şifre Güncelle" }}
+        component={AdminPasswordUpdate}
+      ></AdminPasswordUpdateStack.Screen>
+    </AdminPasswordUpdateStack.Navigator>
+  );
+}
+const AdminHomeStack = createNativeStackNavigator();
+function AdminHomeStackScreen() {
+  return (
+    <AdminHomeStack.Navigator>
+      <AdminHomeStack.Screen
+        name="AdminHome"
+        options={{ title: "Profilim" }}
+        component={AdminHome}
+      ></AdminHomeStack.Screen>
+    </AdminHomeStack.Navigator>
+  );
+}
 export {
   HomeStackScreen,
   LoginStackScreen,
   ContactStackScreen,
   AboutStackScreen,
   UserHomeStackScreen,
-  UserPasswordUpdateScreen,
-  UserUpdateScreen
+  UserPasswordUpdateStackScreen,
+  UserUpdateStackScreen,
+  AdminUpdateStackScreen,
+  AdminPasswordUpdateStackScreen,
+  AdminHomeStackScreen,
 };

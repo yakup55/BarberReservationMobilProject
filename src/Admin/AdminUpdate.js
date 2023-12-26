@@ -1,8 +1,10 @@
 import { useFormik } from "formik";
 import {
+  Avatar,
   Button,
   Center,
   FormControl,
+  Heading,
   Input,
   Stack,
   Text,
@@ -10,16 +12,16 @@ import {
 } from "native-base";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getByUserId, update } from "../../Redux/actions/userActions";
-import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { FontAwesome5 } from "@expo/vector-icons";
+import validationSchema from "./validations";
 import { useEffect } from "react";
-
-function UserUpdate() {
+import { FontAwesome5 } from "@expo/vector-icons";
+import {update,getByBarberId} from "../Redux/actions/barberActions"
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
+function AdminUpdate() {
+  const [barberId, setBarberId] = useState("");
+  const { barber } = useSelector((state) => state.barber);
   const dispacth = useDispatch();
-  const [userId, setUserId] = useState("");
-  const { user } = useSelector((state) => state.user);
   const {
     handleSubmit,
     handleBlur,
@@ -30,23 +32,24 @@ function UserUpdate() {
     setValues,
   } = useFormik({
     initialValues: {
-      id: userId,
+      id: barberId,
       surName: "",
-      experience: "",
+      experience:""
     },
     onSubmit: (values) => {
-      dispacth(update(userId, values));
+      console.log(values)
+      dispacth(update(barberId, values));
     },
   });
   useEffect(() => {
-    AsyncStorage.getItem("userId").then((value) => {
-      setUserId(value);
+    AsyncStorage.getItem("barberId").then((value) => {
+      setBarberId(value);
     });
-    dispacth(getByUserId(userId));
+    dispacth(getByBarberId(barberId));
     setValues({
-      id: userId,
-      surName: user.surName,
-      experience: user.experience,
+      id: barberId,
+      surName: barber.surName,
+      experience:barber.experience
     });
   }, []);
   return (
@@ -62,7 +65,7 @@ function UserUpdate() {
         </FormControl>
         <FormControl>
           <FormControl.Label>Kullanıcı Adınız</FormControl.Label>
-          <Input value={user.name} isDisabled />
+          <Input value={barber.userName} isDisabled />
         </FormControl>
         <FormControl>
           <FormControl.Label>Kullanıcı Soyadınız</FormControl.Label>
@@ -79,7 +82,20 @@ function UserUpdate() {
         </FormControl>
         <FormControl>
           <FormControl.Label>Telefon Numaranızı Giriniz</FormControl.Label>
-          <Input value={user.phoneNumber} isDisabled />
+          <Input value={barber.phoneNumber} isDisabled />
+        </FormControl>
+        <FormControl>
+          <FormControl.Label>Deneyim Yılı </FormControl.Label>
+          <Input
+            id="experience"
+            name="experience"
+            onChangeText={handleChange("experience")}
+            value={values.experience}
+            onBlur={handleBlur("experience")}
+          />
+          {errors.experience && touched.experience && (
+            <Text style={{ color: "red" }}>{errors.experience}</Text>
+          )}
         </FormControl>
         <FormControl>
           <Button onPress={handleSubmit} colorScheme="success">
@@ -91,4 +107,4 @@ function UserUpdate() {
   );
 }
 
-export default UserUpdate;
+export default AdminUpdate;

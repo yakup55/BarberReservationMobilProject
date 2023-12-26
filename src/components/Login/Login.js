@@ -35,36 +35,30 @@ function Login() {
       password: "",
     },
     onSubmit: async (values) => {
-      console.log(values);
-
+      
       dispacth(login(values));
       const result = await service.login(values);
-
-      if (result.status === 200) {
-        const resp = result.data;
-        AsyncStorage.setItem("userId", resp.userId);
-        AsyncStorage.setItem("userName", resp.userName);
-        AsyncStorage.setItem("surName", resp.surName);
-        AsyncStorage.setItem("phoneNumber", resp.phoneNumber);
-        AsyncStorage.setItem("message", resp.message);
-        AsyncStorage.setItem("accessToken", resp.accessToken);
-        AsyncStorage.setItem("refreshToken", resp.refreshToken);
-        AsyncStorage.setItem("isLogin", true);
-
-        dispacth(
-          setUser({
-            userId: resp.userId,
-            userName: resp.userName,
-            accessToken: resp.accessToken,
-            isLogin: true,
-          })
-        );
-      }
-
-      if (result.status === 401) {
-      }
+      const resp = result.data;
+      
+      const userIdString = JSON.stringify(resp.userId);
+      await AsyncStorage.setItem("userId", userIdString);
+      await AsyncStorage.setItem("userName", resp.userName);
+      await AsyncStorage.setItem("surName", resp.surName);
+      await AsyncStorage.setItem("phoneNumber", resp.phoneNumber);
+      await AsyncStorage.setItem("message", resp.message);
+      await AsyncStorage.setItem("accessToken", resp.accessToken);
+      await AsyncStorage.setItem("refreshToken", resp.refreshToken);
+      await AsyncStorage.setItem("isLogin", "true");
+      console.log(values)
+      dispacth(
+        setUser({
+          userId: resp.userId,
+          userName: resp.userName,
+          accessToken: resp.accessToken,
+          isLogin: true,
+        })
+      );
     },
-    validationSchema,
   });
   return (
     <Center w="100%">

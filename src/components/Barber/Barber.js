@@ -10,7 +10,7 @@ import {
   Stack,
   Text,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getList2 } from "../../Redux/actions/barberActions";
 
@@ -20,7 +20,6 @@ function Barber() {
   useEffect(() => {
     dispacth(getList2());
   }, []);
-console.log(barbers)
   return (
     <>
       <Heading mt={5} textAlign="center" fontStyle="italic" mb={2}>

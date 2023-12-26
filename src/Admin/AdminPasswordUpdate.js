@@ -1,45 +1,42 @@
+import { useFormik } from "formik";
 import {
   Button,
   Center,
   FormControl,
+  Heading,
   Input,
   Stack,
   Text,
   View,
 } from "native-base";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch } from "react-redux";
-import {
-  getByUserId,
-  updateUserPassword,
-} from "../../Redux/actions/userActions";
-import { useFormik } from "formik";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useEffect } from "react";
 import { useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import validationSchema from "./validations";
-import UserService from "../../Redux/services/userService";
-function UserPasswordUpdate() {
-  const service = new UserService();
-  const [userId, setUserId] = useState("");
+import { updateBarberPassword } from "../Redux/actions/barberActions";
+function AdminPasswordUpdate() {
+  const [barberId, setBarberId] = useState("");
+  const dispacth = useDispatch();
   const { handleSubmit, handleBlur, values, handleChange, errors, touched } =
     useFormik({
       initialValues: {
-        userId: 0,
+        barberId: 0,
         oldPassword: "",
         newPassword: "",
       },
-      onSubmit: async (values) => {
+      onSubmit: (values) => {
         console.log(values);
-        const result = await service.updateUserPassword(values);
-        console.log(result);
+        dispacth(updateBarberPassword(values));
       },
     });
   useEffect(() => {
-    AsyncStorage.getItem("userId").then((value) => {
-      setUserId(value);
+    AsyncStorage.getItem("barberId").then((value) => {
+      setBarberId(value);
     });
   }, []);
+
   return (
     <Center mt="50">
       <Stack space={4} w="75%" maxW="300px" mx="auto">
@@ -55,13 +52,13 @@ function UserPasswordUpdate() {
           <Input
             h="1"
             w="1"
-            isReadOnly
-            isDisabled
-            id="userId"
-            name="userId"
-            onChangeText={handleChange("userId")}
-            onBlur={handleBlur("userId")}
-            value={(values.userId = userId)}
+           isReadOnly
+           isDisabled
+            id="barberId"
+            name="barberId"
+            onChangeText={handleChange("barberId")}
+            value={(values.barberId = barberId)}
+            onBlur={handleBlur("barberId")}
           />
         </FormControl>
         <FormControl>
@@ -70,6 +67,7 @@ function UserPasswordUpdate() {
             id="oldPassword"
             name="oldPassword"
             onChangeText={handleChange("oldPassword")}
+            value={values.oldPassword}
             onBlur={handleBlur("oldPassword")}
             placeholder="Eski Şifreniz"
           />
@@ -83,6 +81,7 @@ function UserPasswordUpdate() {
             id="newPassword"
             name="newPassword"
             onChangeText={handleChange("newPassword")}
+            value={values.newPassword}
             onBlur={handleBlur("newPassword")}
             placeholder="Yeni Şifrenizi Giriniz"
           />
@@ -101,4 +100,4 @@ function UserPasswordUpdate() {
   );
 }
 
-export default UserPasswordUpdate;
+export default AdminPasswordUpdate;
