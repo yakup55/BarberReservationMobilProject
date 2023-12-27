@@ -1,4 +1,5 @@
 import {
+  AlertDialog,
   Avatar,
   Badge,
   Box,
@@ -17,32 +18,34 @@ import {
   Text,
   VStack,
   View,
+  useToast,
 } from "native-base";
 import React, { useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { getUserId } from "../../Redux/actions/reservationActions";
+import { deleted, getUserId } from "../../Redux/actions/reservationActions";
 function UserHome() {
   const [userName, setUserName] = useState("");
   const [surName, setSurName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [userId, setUserId] = useState("");
+  const [isOpen, setIsOpen] = React.useState(false);
+  const onClose = () => setIsOpen(false);
+  const cancelRef = React.useRef(null);
   const dispacth = useDispatch();
+  const toast = useToast();
   const { reservations } = useSelector((state) => state.reservation);
   useEffect(() => {
     dispacth(getUserId(userId));
     AsyncStorage.getItem("userName").then((value) => {
-      // AsyncStorage'den alınan değeri state'e atama
       setUserName(value);
     });
     AsyncStorage.getItem("surName").then((value) => {
-      // AsyncStorage'den alınan değeri state'e atama
       setSurName(value);
     });
     AsyncStorage.getItem("phoneNumber").then((value) => {
-      // AsyncStorage'den alınan değeri state'e atama
       setPhoneNumber(value);
     });
     AsyncStorage.getItem("userId").then((value) => {
@@ -58,7 +61,20 @@ function UserHome() {
     AsyncStorage.removeItem("surName");
     AsyncStorage.removeItem("userId");
     AsyncStorage.removeItem("userName");
+    toast.show({
+      render: () => {
+        return (
+          <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+            Çıkış Yapıldı
+          </Box>
+        );
+      },
+    });
   };
+  const handleReservationDeleted = (id) => {
+    dispacth(deleted(id));
+  };
+  console.log(reservations);
   return (
     <>
       <Container mt={30} margin="auto" display="flex">
@@ -109,14 +125,25 @@ function UserHome() {
       <>
         {reservations.length !== 0 && (
           <>
-            <Heading mt={5} textAlign="center" fontStyle="italic" mb={2}>
+            <Heading mt={5} textAlign="center" fontStyle="italic">
               Randevularım
             </Heading>
-            {reservations?.map((reservation) => (
-              <ScrollView h="300" horizontal={true}>
-                <Box mb={10} mt={10} alignItems="center">
-                  <HStack space={3} justifyContent="center">
-                    <Center mt={5} h="100" w="200" rounded="2xl" shadow={2}>
+
+            <ScrollView
+              h="300"
+              horizontal={true}
+              showsVerticalScrollIndicator={false}
+            >
+              {reservations?.map((reservation) => (
+                <VStack
+                  mr="200"
+                  py="2"
+                  space={3}
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Box alignItems="center">
+                    <Center h="100" w="200" rounded="2xl" shadow={2}>
                       <Box alignItems="center">
                         <Pressable
                           ml={210}
@@ -160,18 +187,61 @@ function UserHome() {
                               {reservation.description}
                             </Text>
                             <Flex>
-                              <Button colorScheme="red" mt={2}>
-                                İptal Et
+                              <Button
+                                colorScheme="danger"
+                                onPress={() => setIsOpen(!isOpen)}
+                              >
+                                İptal
                               </Button>
+                              <AlertDialog
+                                leastDestructiveRef={cancelRef}
+                                isOpen={isOpen}
+                                onClose={onClose}
+                              >
+                                <AlertDialog.Content>
+                                  <AlertDialog.CloseButton />
+                                  <AlertDialog.Header>
+                                    Randevu İptal İşlemi
+                                  </AlertDialog.Header>
+                                  <AlertDialog.Body>
+                                    Randevunuzu iptal etmek istediğinize emin
+                                    misiniz randevunuz silinecektir
+                                  </AlertDialog.Body>
+                                  <AlertDialog.Footer>
+                                    <Button.Group space={2}>
+                                      <Button
+                                        variant="unstyled"
+                                        colorScheme="coolGray"
+                                        onPress={onClose}
+                                        ref={cancelRef}
+                                      >
+                                        Vazgeç
+                                      </Button>
+                                      <Button
+                                        colorScheme="danger"
+                                        onPress={
+                                          onClose &&
+                                          (() =>
+                                            handleReservationDeleted(
+                                              reservation.id
+                                            ))
+                                        }
+                                      >
+                                        Sil
+                                      </Button>
+                                    </Button.Group>
+                                  </AlertDialog.Footer>
+                                </AlertDialog.Content>
+                              </AlertDialog>
                             </Flex>
                           </Box>
                         </Pressable>
                       </Box>
                     </Center>
-                  </HStack>
-                </Box>
-              </ScrollView>
-            ))}
+                  </Box>
+                </VStack>
+              ))}
+            </ScrollView>
           </>
         )}
       </>

@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Center,
   FormControl,
@@ -6,6 +7,7 @@ import {
   Stack,
   Text,
   View,
+  useToast,
 } from "native-base";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -22,6 +24,7 @@ import UserService from "../../Redux/services/userService";
 function UserPasswordUpdate() {
   const service = new UserService();
   const [userId, setUserId] = useState("");
+  const toast = useToast();
   const { handleSubmit, handleBlur, values, handleChange, errors, touched } =
     useFormik({
       initialValues: {
@@ -30,9 +33,28 @@ function UserPasswordUpdate() {
         newPassword: "",
       },
       onSubmit: async (values) => {
-        console.log(values);
         const result = await service.updateUserPassword(values);
-        console.log(result);
+        if (result.status === 400) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="error.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Eski Şifreniz Yanlış
+                </Box>
+              );
+            },
+          });
+        } else if (result.status === 200) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Şifreniz Güncellenmiştir
+                </Box>
+              );
+            },
+          });
+        }
       },
     });
   useEffect(() => {

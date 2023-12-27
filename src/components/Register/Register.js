@@ -17,6 +17,7 @@ import {
   VStack,
   View,
   WarningOutlineIcon,
+  useToast,
 } from "native-base";
 import React from "react";
 import AuthService from "../../Redux/services/authService";
@@ -29,6 +30,7 @@ function Register() {
   const navigation = useNavigation();
   const { users } = useSelector((state) => state.user);
   const dispacth = useDispatch();
+  const toast = useToast();
   const {
     handleSubmit,
     touched,
@@ -48,16 +50,44 @@ function Register() {
       const result = service.register(values);
       await new Promise((r) => setTimeout(r, 100));
       if (users.find((x) => x.phoneNumber === values.phoneNumber)) {
-        return bag.setErrors({
-          phoneNumber: "Bu Telefon Numarası Zaten Kayıtlı",
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="danger.500" px="2" py="1" rounded="3xl" mb={5}>
+                Bu telefon numarası kayıtlıdır
+              </Box>
+            );
+          },
         });
       } else if (users.find((x) => x.name === values.userName)) {
-        return bag.setErrors({ userName: "Bu Kullanıcı Adı  Zaten Kayıtlı" });
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="danger.500" px="2" py="1" rounded="3xl" mb={5}>
+                Bu kullanıcı adı kayıtlıdır
+              </Box>
+            );
+          },
+        });
       } else if (result.status === 400) {
-        return bag.setErrors({ phoneNumber: "Hata Oluştu" });
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="danger.500" px="2" py="1" rounded="3xl" mb={5}>
+                Sistemsel hata oluştu tekrar deneyiniz
+              </Box>
+            );
+          },
+        });
       } else if (result.status === 201) {
-        return bag.setErrors({
-          phoneNumber: "Kayıt Başarılı Giriş Yapabilirsiniz",
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                Kaydınız başarılı bir şekilde oluşturulmuştur
+              </Box>
+            );
+          },
         });
       }
     },
@@ -67,6 +97,7 @@ function Register() {
   useEffect(() => {
     dispacth(getList6());
   }, []);
+  console.log(users)
   return (
     <Center w="100%">
       <Box safeArea p="2" py="8" w="90%" maxW="290">

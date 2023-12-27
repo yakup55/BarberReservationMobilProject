@@ -1,5 +1,6 @@
 import { useFormik } from "formik";
 import {
+  Box,
   Button,
   Center,
   FormControl,
@@ -7,6 +8,7 @@ import {
   Stack,
   Text,
   View,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +22,7 @@ function UserUpdate() {
   const dispacth = useDispatch();
   const [userId, setUserId] = useState("");
   const { user } = useSelector((state) => state.user);
+  const toast = useToast();
   const {
     handleSubmit,
     handleBlur,
@@ -36,6 +39,15 @@ function UserUpdate() {
     },
     onSubmit: (values) => {
       dispacth(update(userId, values));
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+              Bilgileriniz Güncellenmiştir
+            </Box>
+          );
+        },
+      });
     },
   });
   useEffect(() => {
@@ -49,6 +61,7 @@ function UserUpdate() {
       experience: user.experience,
     });
   }, []);
+  console.log(user);
   return (
     <Center mt="50">
       <Stack space={4} w="75%" maxW="300px" mx="auto">

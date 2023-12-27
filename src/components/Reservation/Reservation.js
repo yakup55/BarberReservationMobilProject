@@ -1,4 +1,3 @@
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import {
   Box,
   Button,
@@ -10,35 +9,37 @@ import {
   Select,
   Text,
   VStack,
-  View,
-  WarningOutlineIcon,
+  useToast,
 } from "native-base";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReservationService from "../../Redux/services/reservationService";
-import validationSchema from "./validations";
 import { getList2 } from "../../Redux/actions/barberActions";
 import { getList4 } from "../../Redux/actions/hourActions";
-import { add } from "../../Redux/actions/reservationActions";
 import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFormik } from "formik";
+import DatePicker from "react-native-modern-datepicker";
+import { add } from "../../Redux/actions/reservationActions";
 function Reservation() {
   const dispacth = useDispatch();
   const service = new ReservationService();
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState(0);
   const [barberId, setBarberId] = useState(0);
+  const [hourId, setHourId] = useState(0);
   const { barbers } = useSelector((state) => state.barber);
   const { hours } = useSelector((state) => state.hour);
+  const [selectedDate, setSelectedDate] = useState("");
+  const toast = useToast();
   const { handleSubmit, handleChange, handleBlur, errors, values, touched } =
     useFormik({
       initialValues: {
         barberId: 0,
-        hourId: "",
+        hourId: 0,
         userId: 0,
         description: "",
         status: false,
-        date: "",
+        date: selectedDate,
       },
       onSubmit: async (values) => {
         console.log(values);
@@ -47,6 +48,28 @@ function Reservation() {
           values.hourId,
           values.date
         );
+        if (result.status === 200) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="error.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Berber bu saat veya günde doludur
+                </Box>
+              );
+            },
+          });
+        } else if (result.status === 404) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Reservasyonunuz alınmıştır
+                </Box>
+              );
+            },
+          });
+          dispacth(add(values));
+        }
         console.log(result);
       },
     });
@@ -57,12 +80,13 @@ function Reservation() {
       setUserId(value);
     });
   }, []);
-  console.log(barberId);
+  const eskiTarih = selectedDate;
+  const yeniTarih = eskiTarih.replace(/\//g, "-");
   return (
     <Center>
       <Heading mb={3} textAlign="center" fontStyle="italic" marginTop="2">
         Randevu Alın
-      </Heading>  
+      </Heading>
       <VStack w="500" space={4} alignItems="center">
         <FormControl>
           <Input
@@ -79,19 +103,29 @@ function Reservation() {
         </FormControl>
         <FormControl maxW="300">
           <FormControl.Label>Tarih Seçiniz</FormControl.Label>
-          <RNDateTimePicker
-            id="date"
-            name="date"
-            onChangeText={handleChange("date")}
-            onBlur={handleBlur}
-            style={{ width: 100 }}
-            value={(values.date = new Date())}
+          <DatePicker
+            onSelectedChange={setSelectedDate}
+            options={{
+              backgroundColor: "#090C08",
+              textHeaderColor: "#FFA25B",
+              textDefaultColor: "#F6E7C1",
+              selectedTextColor: "#fff",
+              mainColor: "#F4722B",
+              textSecondaryColor: "#D6C7A1",
+              borderColor: "rgba(122, 146, 165, 0.1)",
+            }}
+            current={(values.date = yeniTarih)}
+            selected={(values.date = yeniTarih)}
+            mode="calendar"
+            minuteInterval={30}
+            style={{ borderRadius: 10 }}
           />
         </FormControl>
 
         <FormControl maxW="300">
           <FormControl.Label>Berber Seçiniz</FormControl.Label>
           <Select
+            onValueChange={(value) => setBarberId(value)}
             value={(values.barberId = barberId)}
             id="barberId"
             name="barberId"
@@ -107,9 +141,10 @@ function Reservation() {
             mt="1"
           >
             {barbers?.map((barber) => (
-              <Select.Item  label={barber?.userName} value={barber.id}>
-                
-              </Select.Item>
+              <Select.Item
+                label={barber?.userName}
+                value={barber.id}
+              ></Select.Item>
             ))}
           </Select>
           {errors.barberId && touched.barberId && (
@@ -119,7 +154,8 @@ function Reservation() {
         <FormControl maxW="300">
           <FormControl.Label>Saat Seçiniz</FormControl.Label>
           <Select
-            value={values.hourId}
+            value={(values.hourId = hourId)}
+            onValueChange={(value) => setHourId(value)}
             id="hourId"
             name="hourId"
             onChangeText={handleChange("hourId")}

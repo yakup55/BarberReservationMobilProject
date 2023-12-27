@@ -25,6 +25,7 @@ const BottomTabNavigation = () => {
       setIsBarberLogin(value);
     });
   }, []);
+  console.log(isLogin)
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -62,7 +63,7 @@ const BottomTabNavigation = () => {
         component={HomeStackScreen}
         options={{ title: "Anasayfa" }}
       />
-      {isLogin === "null" &&
+      {isLogin === null &&
         (isBarberLogin === null && (
           <Tab.Screen
             name="Register"
