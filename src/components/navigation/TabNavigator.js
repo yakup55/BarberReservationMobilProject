@@ -64,7 +64,7 @@ const BottomTabNavigation = () => {
         options={{ title: "Anasayfa" }}
       />
       {isLogin === null &&
-        (isBarberLogin === null && (
+        (isBarberLogin !== null && (
           <Tab.Screen
             name="Register"
             component={LoginStackScreen}
@@ -91,7 +91,7 @@ const BottomTabNavigation = () => {
           />
         </>
       )}
-      {isBarberLogin !== null && (
+      {isBarberLogin === null && (
         <>
           <Tab.Screen
             name="AdminHome"

@@ -1,5 +1,6 @@
 import { useFormik } from "formik";
 import {
+  Box,
   Button,
   FormControl,
   Heading,
@@ -8,6 +9,7 @@ import {
   Text,
   View,
   WarningOutlineIcon,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -15,6 +17,7 @@ import validationSchema from "../Contact/validations";
 import { add } from "../../Redux/actions/contactActions";
 function Contact() {
   const dispacth = useDispatch();
+  const toast = useToast();
   const {
     handleSubmit,
     handleChange,
@@ -31,6 +34,15 @@ function Contact() {
     },
     onSubmit: (values) => {
       dispacth(add(values));
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+              Geri Bildiriminiz Alınmıştır
+            </Box>
+          );
+        },
+      });
     },
     validationSchema,
   });
@@ -41,7 +53,7 @@ function Contact() {
       </Heading>
       <Stack space={4} w="75%" maxW="300px" mx="auto">
         <FormControl>
-        <FormControl.Label>Adınızı Giriniz</FormControl.Label>
+          <FormControl.Label>Adınızı Giriniz</FormControl.Label>
           <Input
             id="name"
             name="name"
@@ -58,7 +70,7 @@ function Contact() {
         </FormControl>
 
         <FormControl>
-        <FormControl.Label>Telefon Numaranızı Giriniz</FormControl.Label>
+          <FormControl.Label>Telefon Numaranızı Giriniz</FormControl.Label>
           <Input
             id="phoneNumber"
             name="phoneNumber"
@@ -74,7 +86,7 @@ function Contact() {
           )}
         </FormControl>
         <FormControl>
-        <FormControl.Label>Açıklama Ekleyeniz</FormControl.Label>
+          <FormControl.Label>Açıklama Ekleyeniz</FormControl.Label>
           <Input
             id="description"
             name="description"

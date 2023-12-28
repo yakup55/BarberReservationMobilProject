@@ -1,6 +1,7 @@
 import { useFormik } from "formik";
 import {
   Avatar,
+  Box,
   Button,
   Center,
   FormControl,
@@ -9,16 +10,18 @@ import {
   Stack,
   Text,
   View,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import validationSchema from "./validations";
 import { useEffect } from "react";
 import { FontAwesome5 } from "@expo/vector-icons";
-import {update,getByBarberId} from "../Redux/actions/barberActions"
+import { update, getByBarberId } from "../Redux/actions/barberActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useState } from "react";
 function AdminUpdate() {
+  const toast = useToast();
   const [barberId, setBarberId] = useState("");
   const { barber } = useSelector((state) => state.barber);
   const dispacth = useDispatch();
@@ -34,11 +37,20 @@ function AdminUpdate() {
     initialValues: {
       id: barberId,
       surName: "",
-      experience:""
+      experience: "",
     },
     onSubmit: (values) => {
-      console.log(values)
+      console.log(values);
       dispacth(update(barberId, values));
+      toast.show({
+        render: () => {
+          return (
+            <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+              Bilgileriniz Güncellenmiştir
+            </Box>
+          );
+        },
+      });
     },
   });
   useEffect(() => {
@@ -49,9 +61,10 @@ function AdminUpdate() {
     setValues({
       id: barberId,
       surName: barber.surName,
-      experience:barber.experience
+      experience: barber.experience,
     });
   }, []);
+  console.log(barberId);
   return (
     <Center mt="50">
       <Stack space={4} w="75%" maxW="300px" mx="auto">

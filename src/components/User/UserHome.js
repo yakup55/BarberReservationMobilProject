@@ -26,6 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { deleted, getUserId } from "../../Redux/actions/reservationActions";
+import { getList7 } from "../../Redux/actions/contactActions";
 function UserHome() {
   const [userName, setUserName] = useState("");
   const [surName, setSurName] = useState("");
@@ -37,6 +38,7 @@ function UserHome() {
   const dispacth = useDispatch();
   const toast = useToast();
   const { reservations } = useSelector((state) => state.reservation);
+  
   useEffect(() => {
     dispacth(getUserId(userId));
     AsyncStorage.getItem("userName").then((value) => {
@@ -74,7 +76,7 @@ function UserHome() {
   const handleReservationDeleted = (id) => {
     dispacth(deleted(id));
   };
-  console.log(reservations);
+  
   return (
     <>
       <Container mt={30} margin="auto" display="flex">
@@ -245,6 +247,7 @@ function UserHome() {
           </>
         )}
       </>
+    
     </>
   );
 }

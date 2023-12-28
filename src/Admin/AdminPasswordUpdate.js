@@ -1,5 +1,6 @@
 import { useFormik } from "formik";
 import {
+  Box,
   Button,
   Center,
   FormControl,
@@ -8,6 +9,7 @@ import {
   Stack,
   Text,
   View,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -19,6 +21,7 @@ import { updateBarberPassword } from "../Redux/actions/barberActions";
 function AdminPasswordUpdate() {
   const [barberId, setBarberId] = useState("");
   const dispacth = useDispatch();
+  const toast = useToast();
   const { handleSubmit, handleBlur, values, handleChange, errors, touched } =
     useFormik({
       initialValues: {
@@ -26,9 +29,31 @@ function AdminPasswordUpdate() {
         oldPassword: "",
         newPassword: "",
       },
-      onSubmit: (values) => {
+      onSubmit: async (values) => {
         console.log(values);
-        dispacth(updateBarberPassword(values));
+        //dispacth(updateBarberPassword(values));
+        const result = await service.updateBarberPassword(values);
+        if (result.status === 400) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="error.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Eski Şifreniz Yanlış
+                </Box>
+              );
+            },
+          });
+        } else if (result.status === 200) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Şifreniz Güncellenmiştir
+                </Box>
+              );
+            },
+          });
+        }
       },
     });
   useEffect(() => {
@@ -52,8 +77,8 @@ function AdminPasswordUpdate() {
           <Input
             h="1"
             w="1"
-           isReadOnly
-           isDisabled
+            isReadOnly
+            isDisabled
             id="barberId"
             name="barberId"
             onChangeText={handleChange("barberId")}

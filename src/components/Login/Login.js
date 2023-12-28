@@ -9,6 +9,7 @@ import {
   Link,
   Text,
   VStack,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -21,6 +22,7 @@ function Login() {
   const dispacth = useDispatch();
   const service = new AuthService();
   const navigation = useNavigation();
+  const toast = useToast();
   const {
     handleSubmit,
     values,
@@ -35,11 +37,21 @@ function Login() {
       password: "",
     },
     onSubmit: async (values) => {
-      
       dispacth(login(values));
       const result = await service.login(values);
+      if (result.status === 200) {
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                Giriş Başarılı
+              </Box>
+            );
+          },
+        });
+      }
       const resp = result.data;
-      
+
       const userIdString = JSON.stringify(resp.userId);
       await AsyncStorage.setItem("userId", userIdString);
       await AsyncStorage.setItem("userName", resp.userName);
@@ -49,7 +61,7 @@ function Login() {
       await AsyncStorage.setItem("accessToken", resp.accessToken);
       await AsyncStorage.setItem("refreshToken", resp.refreshToken);
       await AsyncStorage.setItem("isLogin", "true");
-      console.log(values)
+      console.log(values);
       dispacth(
         setUser({
           userId: resp.userId,
@@ -58,6 +70,17 @@ function Login() {
           isLogin: true,
         })
       );
+      if (result.status === 403) {
+        toast.show({
+          render: () => {
+            return (
+              <Box bg="danger.500" px={2} py={1} rounded={"3xl"} mb={5}>
+                Giriş Başarısız
+              </Box>
+            );
+          },
+        });
+      }
     },
   });
   return (

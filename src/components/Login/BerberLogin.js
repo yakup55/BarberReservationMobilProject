@@ -10,6 +10,7 @@ import {
   Link,
   Text,
   VStack,
+  useToast,
 } from "native-base";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -18,7 +19,9 @@ import { barberLogin } from "../../Redux/actions/barberActions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setBarber } from "../../Redux/actions/authActions";
 import validationSchema from "../Register/validations";
+import { useNavigation } from "@react-navigation/native";
 function BerberLogin() {
+  const navigation = useNavigation();
   const dispacth = useDispatch();
   const service = new BarberService();
   const { handleSubmit, handleBlur, handleChange, values, errors, touched } =
@@ -32,6 +35,15 @@ function BerberLogin() {
         const result = await service.barberLogin(values);
         console.log(result);
         if (result.status === 200) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="emerald.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Giriş Başarılı
+                </Box>
+              );
+            },
+          });
           const resp = result.data;
           const barberIdString = JSON.stringify(resp.barberId);
           await AsyncStorage.setItem("barberId", barberIdString);
@@ -54,7 +66,16 @@ function BerberLogin() {
           );
         }
 
-        if (result.status === 401) {
+        if (result.status === 403) {
+          toast.show({
+            render: () => {
+              return (
+                <Box bg="danger.500" px="2" py="1" rounded="3xl" mb={5}>
+                  Giriş Başarısız
+                </Box>
+              );
+            },
+          });
         }
       },
     });
