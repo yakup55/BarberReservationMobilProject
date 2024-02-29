@@ -25,7 +25,7 @@ const BottomTabNavigation = () => {
       setIsBarberLogin(value);
     });
   }, []);
-  console.log(isLogin)
+  console.log(isBarberLogin)
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -91,7 +91,7 @@ const BottomTabNavigation = () => {
           />
         </>
       )}
-      {isBarberLogin === null && (
+      {isBarberLogin == null && (
         <>
           <Tab.Screen
             name="AdminHome"

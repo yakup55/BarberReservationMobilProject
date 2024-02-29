@@ -76,7 +76,7 @@ function UserHome() {
   const handleReservationDeleted = (id) => {
     dispacth(deleted(id));
   };
-  
+  console.log(userId)
   return (
     <>
       <Container mt={30} margin="auto" display="flex">

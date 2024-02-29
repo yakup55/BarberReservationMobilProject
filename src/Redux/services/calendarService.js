@@ -2,8 +2,8 @@ import axios from "axios";
 
 class CalendarService {
   constructor() {
-    //this.baseUrl = `http://10.36.117.95:8080/calendars`;
-    this.baseUrl = `http://10.12.2.10:8080/calendars`;
+    this.baseUrl = `http://10.36.116.115:8080/calendars`;
+    //this.baseUrl = `http://10.12.2.10:8080/calendars`;
     //this.baseUrl = `http://10.11.56.20:8080/calendars`;
   }
   async getCalendarsList() {
